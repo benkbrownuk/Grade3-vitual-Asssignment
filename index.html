@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Grade 3 FID Game Homework</title>
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: linear-gradient(135deg, #4facfe, #00f2fe);
+      margin: 0;
+      padding: 0;
+      color: #222;
+    }
+    header {
+      background: rgba(255,255,255,0.95);
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 20px;
+    }
+    #app {
+      max-width: 980px;
+      margin: 20px auto;
+      background: rgba(255,255,255,0.97);
+      border-radius: 12px;
+      padding: 20px 25px 30px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    .screen { display: none; }
+    .screen.active { display: block; }
+    .btn {
+      background: linear-gradient(45deg,#ff7a18,#ffb347);
+      border: none;
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      margin-top: 10px;
+    }
+    .btn:disabled { opacity: 0.5; cursor: default; }
+    .field { margin-bottom: 12px; }
+    .field label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .field input, .field select, .field textarea {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+    .card {
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 15px;
+      background: #f7fbff;
+      border: 1px solid #d6e9ff;
+    }
+    .section-title {
+      font-size: 18px;
+      margin: 10px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .badge {
+      background: #4facfe;
+      color: #fff;
+      border-radius: 999px;
+      padding: 3px 10px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .badge-secondary {
+      background: #ff7a18;
+    }
+    .progress-bar {
+      width: 100%;
+      height: 10px;
+      background: #e0e0e0;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 10px 0 20px;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg,#00c853,#b2ff59);
+      transition: width 0.3s ease;
+    }
+    .question {
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+    .meta {
+      font-size: 12px;
+      color: #555;
+      margin-bottom: 6px;
+    }
+    .options label {
+      display: block;
+      margin-bottom: 4px;
+      cursor: pointer;
+    }
+    .hint {
+      font-size: 12px;
+      color: #1565c0;
+      margin-top: 6px;
+      display: none;
+    }
+    .starter {
+      font-size: 12px;
+      color: #6a1b9a;
+      margin-top: 4px;
+    }
+    .result-line {
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+    .correct { color: #2e7d32; font-weight: 600; }
+    .incorrect { color: #c62828; font-weight: 600; }
+    .score-box {
+      padding: 10px;
+      border-radius: 8px;
+      background: #e8f5e9;
+      border: 1px solid #a5d6a7;
+      margin: 10px 0 15px;
+    }
+    .small { font-size: 12px; color: #555; }
+    .top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .pill {
+      border-radius: 999px;
+      padding: 3px 10px;
+      background: #e3f2fd;
+      font-size: 11px;
+    }
+    .btn-small {
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      margin-left: 6px;
+    }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Grade 3 Flexible Instruction Day Game</h1>
+  <div class="small">Stupendous Learning Arcade</div>
+</header>
+
+<div id="app">
+  <!-- LOGIN SCREEN -->
+  <div id="screen-login" class="screen active">
+    <h2>Sign In to Start</h2>
+    <p>Type your name and choose your grade to begin your homework game.</p>
+    <div class="card">
+      <div class="field">
+        <label for="studentName">Your Name</label>
+        <input id="studentName" type="text" placeholder="Type your full name" />
+      </div>
+      <div class="field">
+        <label for="studentGrade">Your Grade</label>
+        <select id="studentGrade">
+          <option value="">Select grade...</option>
+          <option>Kindergarten</option>
+          <option>Grade 1</option>
+          <option>Grade 2</option>
+          <option selected>Grade 3</option>
+          <option>Grade 4</option>
+          <option>Grade 5</option>
+          <option>Grade 6</option>
+          <option>Grade 7</option>
+          <option>Grade 8</option>
+        </select>
+      </div>
+      <button class="btn" id="btnStart">Start Game</button>
+    </div>
+  </div>
+
+  <!-- QUIZ SCREEN -->
+  <div id="screen-quiz" class="screen">
+    <div class="top-row">
+      <div class="section-title">
+        <span class="badge" id="sectionBadge">Math</span>
+        <span id="sectionTitleText">Warm‑Up</span>
+      </div>
+      <div>
+        <span class="pill" id="pageLabel">Page 2</span>
+        <span class="pill badge-secondary" id="sectionLabel">Section: Word Problem</span>
+      </div>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+    <div id="questionContainer"></div>
+    <button class="btn" id="btnNext">Next</button>
+  </div>
+
+  <!-- RESULT SCREEN -->
+  <div id="screen-result" class="screen">
+    <h2>Great Work!</h2>
+    <div id="scoreSummary" class="score-box"></div>
+    <div id="detailedResults"></div>
+    <button class="btn" id="btnDownloadPdf">Download PDF Report</button>
+    <button class="btn" id="btnSendEmail">Send Results to Teacher</button>
+    <p class="small">
+      Results will be emailed to <strong>CMcGuire@rbwileyccs.org</strong> (once EmailJS keys are added in the code).
+    </p>
+  </div>
+</div>
+
+<!-- Simple sounds -->
+<audio id="soundCorrect" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
+<audio id="soundWrong" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg"></audio>
+<audio id="soundNext" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg"></audio>
+
+<!-- jsPDF CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<!-- EmailJS CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+<script>
+  // ----------------- QUESTION BANK -----------------
+  // Each question is tagged with: page, section, id, type, etc.
+  // type: "mc" (single choice), "multi" (multi-select), "open" (student writes)
+  const questions = [
+    // ---------- PAGE 2: I Am the Stupendous (Set 1) ----------
+    {
+      id: "p2_news",
+      page: 2,
+      section: "My News",
+      area: "Writing",
+      text: "Write a short news headline about something that happened to you recently.",
+      type: "open",
+      hint: "Think: EXTRA, EXTRA! What big or funny thing happened?",
+      starters: ["EXTRA, EXTRA! Today I...", "Breaking news: I..."]
+    },
+    {
+      id: "p2_wordproblem",
+      page: 2,
+      section: "Math Word Problem",
+      area: "Math",
+      text: "There are 9 glasses. Each glass has 3 ice cubes. How many ice cubes are there in total?",
+      type: "mc",
+      options: ["9", "18", "27", "30"],
+      correct: "27",
+      hint: "Think: 9 groups of 3. You can draw or skip count by 3s."
+    },
+    {
+      id: "p2_irregular",
+      page: 2,
+      section: "Irregular Verbs",
+      area: "ELA",
+      text: "Choose the correct past tense forms for the verbs: break, grow.",
+      type: "multi",
+      options: [
+        "break → broke",
+        "break → breaked",
+        "grow → grew",
+        "grow → growed"
+      ],
+      correct: ["break → broke","grow → grew"],
+      hint: "Irregular verbs do NOT just add -ed."
+    },
+    {
+      id: "p2_division",
+      page: 2,
+      section: "Division by 4",
+      area: "Math",
+      text: "Which of these division facts by 4 is correct?",
+      type: "mc",
+      options: ["12 ÷ 4 = 2", "12 ÷ 4 = 3", "28 ÷ 4 = 5", "8 ÷ 4 = 1"],
+      correct: "12 ÷ 4 = 3",
+      hint: "Think: 3 × 4 = 12."
+    },
+    {
+      id: "p2_rounding",
+      page: 2,
+      section: "Rounding Numbers",
+      area: "Math",
+      text: "How does 668 round to the nearest ten and hundred?",
+      type: "mc",
+      options: [
+        "670 and 700",
+        "660 and 600",
+        "670 and 600",
+        "660 and 700"
+      ],
+      correct: "670 and 700",
+      hint: "Look at the ones digit for tens, tens digit for hundreds."
+    },
+    {
+      id: "p2_suffix",
+      page: 2,
+      section: "Suffix -er",
+      area: "ELA",
+      text: "Unscramble the word with suffix -er: tcheaer.",
+      type: "mc",
+      options: ["teacher", "cheater", "recheat"],
+      correct: "teacher",
+      hint: "Someone who teaches."
+    },
+    {
+      id: "p2_plural",
+      page: 2,
+      section: "Plural Nouns",
+      area: "ELA",
+      text: "Which is the correct plural for 'puppy'?",
+      type: "mc",
+      options: ["puppys", "puppies", "puppyies"],
+      correct: "puppies",
+      hint: "If a word ends in y after a consonant, change y to i and add -es."
+    },
+    {
+      id: "p2_writing",
+      page: 2,
+      section: "Writing Prompt",
+      area: "Writing",
+      text: "Write about a time you went to an amusement park or fair. Use past tense.",
+      type: "open",
+      hint: "Use words like went, saw, played, rode, ate.",
+      starters: ["Last time I went to a fair, I...", "At the amusement park, I..."]
+    },
+
+    // ---------- PAGE 3: Multiplication 0–12 ----------
+    {
+      id: "p3_mult",
+      page: 3,
+      section: "Multiplication Facts",
+      area: "Math",
+      text: "Which multiplication fact is correct?",
+      type: "mc",
+      options: ["5 × 6 = 35", "7 × 8 = 54", "4 × 3 = 12", "9 × 2 = 10"],
+      correct: "4 × 3 = 12",
+      hint: "Think of facts you know for sure."
+    },
+
+    // ---------- PAGES 4–7: Carnival Fever ----------
+    {
+      id: "p4_react",
+      page: 6,
+      section: "Carnival Fever Comprehension",
+      area: "Reading",
+      text: "How did Sophie react when she could not go to Michelle's birthday party?",
+      type: "mc",
+      options: [
+        "She complained loudly.",
+        "She acted disappointed, but she didn’t complain.",
+        "She said she would rather go to a carnival.",
+        "She said she felt too tired to go."
+      ],
+      correct: "She acted disappointed, but she didn’t complain.",
+      hint: "She was sad, but she stayed calm."
+    },
+    {
+      id: "p4_family",
+      page: 6,
+      section: "Carnival Fever Comprehension",
+      area: "Reading",
+      text: "What did Sophie’s family do to make her feel better?",
+      type: "mc",
+      options: [
+        "They bought her a new toy.",
+        "They took her to a real carnival.",
+        "They made a carnival in her bedroom.",
+        "They let her watch TV all day."
+      ],
+      correct: "They made a carnival in her bedroom.",
+      hint: "They used bottles, cans, and balloons."
+    },
+    {
+      id: "p4_games",
+      page: 6,
+      section: "Carnival Fever Graphic Organizer",
+      area: "Reading",
+      text: "Which three games were part of Sophie’s bedroom carnival?",
+      type: "multi",
+      options: [
+        "Balloon popping",
+        "Can knockdown",
+        "Ring toss",
+        "Ferris wheel ride",
+        "Roller coaster"
+      ],
+      correct: ["Balloon popping","Can knockdown","Ring toss"],
+      hint: "Think about balloons, cans, and water bottles."
+    },
+    {
+      id: "p4_family_words",
+      page: 6,
+      section: "Carnival Fever Character Traits",
+      area: "Reading",
+      text: "Which two words best describe Sophie’s family?",
+      type: "multi",
+      options: ["indifferent","thoughtful","wealthy","creative"],
+      correct: ["thoughtful","creative"],
+      hint: "They made something special to cheer her up."
+    },
+    {
+      id: "p7_vocab_dart",
+      page: 7,
+      section: "Carnival Fever Vocabulary",
+      area: "Vocabulary",
+      text: "In the story, which word means 'pointed object thrown at a target'?",
+      type: "mc",
+      options: ["balloon","dart","ring","sock"],
+      correct: "dart",
+      hint: "Used in a dart game."
+    },
+
+    // ---------- PAGE 8: Emergency Phone Calls ----------
+    {
+      id: "p8_emergency_mc",
+      page: 8,
+      section: "Emergency Phone Calls",
+      area: "Reading",
+      text: "What should you do when you make an emergency phone call?",
+      type: "multi",
+      options: [
+        "Stay calm and tell what is wrong.",
+        "Give the exact address if you can.",
+        "Explain what happened using details.",
+        "Hang up quickly so they can work.",
+        "Stay on the phone and listen to instructions."
+      ],
+      correct: [
+        "Stay calm and tell what is wrong.",
+        "Give the exact address if you can.",
+        "Explain what happened using details.",
+        "Stay on the phone and listen to instructions."
+      ],
+      hint: "Think about what the helper needs to know."
+    },
+    {
+      id: "p8_emergency_open",
+      page: 8,
+      section: "Emergency Phone Calls (RACE)",
+      area: "Writing",
+      text: "Use the ideas above to write one or two sentences about what to do when you make an emergency phone call.",
+      type: "open",
+      hint: "Use words like stay calm, tell what is wrong, give your address, listen.",
+      starters: ["When I make an emergency phone call, I should...", "To get help, I need to..."]
+    },
+
+    // ---------- PAGE 9: I Am the Stupendous (Set 2) ----------
+    {
+      id: "p9_news",
+      page: 9,
+      section: "My News",
+      area: "Writing",
+      text: "Write a short news headline about something that happened at home or school.",
+      type: "open",
+      hint: "Think of something surprising or exciting.",
+      starters: ["EXTRA, EXTRA! At school today...", "Breaking news: My family..."]
+    },
+    {
+      id: "p9_wordproblem",
+      page: 9,
+      section: "Math Word Problem",
+      area: "Math",
+      text: "There were 3 tables. There were 5 chairs at each table. How many chairs were there in total?",
+      type: "mc",
+      options: ["8","10","15","30"],
+      correct: "15",
+      hint: "Think: 3 groups of 5."
+    },
+    {
+      id: "p9_irregular",
+      page: 9,
+      section: "Irregular Verbs",
+      area: "ELA",
+      text: "Choose the correct past tense forms for the verbs: eat, do.",
+      type: "multi",
+      options: [
+        "eat → eated",
+        "eat → ate",
+        "do → did",
+        "do → doed"
+      ],
+      correct: ["eat → ate","do → did"],
+      hint: "These are common irregular verbs."
+    },
+    {
+      id: "p9_rounding",
+      page: 9,
+      section: "Rounding Numbers",
+      area: "Math",
+      text: "How does 207 round to the nearest ten and hundred?",
+      type: "mc",
+      options: [
+        "210 and 200",
+        "200 and 300",
+        "210 and 300",
+        "200 and 100"
+      ],
+      correct: "210 and 200",
+      hint: "Ones digit for tens, tens digit for hundreds."
+    },
+    {
+      id: "p9_suffix",
+      page: 9,
+      section: "Suffix -er",
+      area: "ELA",
+      text: "Unscramble the word with suffix -er: shcaier.",
+      type: "mc",
+      options: ["chairer","cashier","chaiser"],
+      correct: "cashier",
+      hint: "Someone who works at a store register."
+    },
+    {
+      id: "p9_plural",
+      page: 9,
+      section: "Plural Nouns",
+      area: "ELA",
+      text: "Which is the correct plural for 'butterfly'?",
+      type: "mc",
+      options: ["butterflys","butterflies","butterflyies"],
+      correct: "butterflies",
+      hint: "Change y to i and add -es."
+    },
+    {
+      id: "p9_writing",
+      page: 9,
+      section: "Writing Prompt",
+      area: "Writing",
+      text: "Write about a time you had a snowball fight or another outdoor activity. Use past tense.",
+      type: "open",
+      hint: "Use words like played, threw, ran, laughed.",
+      starters: ["One time I had a snowball fight and...", "During an outdoor game, I..."]
+    },
+
+    // ---------- PAGE 10: Four Wheels and Flies ----------
+    {
+      id: "p10_riddle",
+      page: 10,
+      section: "Four Wheels and Flies",
+      area: "Math Riddle",
+      text: "Riddle: What has 4 wheels and flies?",
+      type: "mc",
+      options: ["A race car","A garbage truck","An airplane","A bicycle"],
+      correct: "A garbage truck",
+      hint: "Think of something with trash and flies."
+    },
+
+    // ---------- PAGES 11–14: A Walk Through the Rainforest ----------
+    {
+      id: "p11_setting",
+      page: 13,
+      section: "Rainforest Comprehension",
+      area: "Reading",
+      text: "Where does the story take place?",
+      type: "mc",
+      options: [
+        "In a tropical rainforest far away",
+        "In the woods behind Emma and Alex's house",
+        "In Rosie's backyard",
+        "At a campsite"
+      ],
+      correct: "In the woods behind Emma and Alex's house",
+      hint: "They pretend it is a rainforest."
+    },
+    {
+      id: "p11_make_fun",
+      page: 13,
+      section: "Rainforest Comprehension",
+      area: "Reading",
+      text: "How did Emma and Alex make their ordinary nature walk more interesting?",
+      type: "mc",
+      options: [
+        "They brought video games.",
+        "They pretended they were in a rainforest and looked for animals.",
+        "They ran home.",
+        "They took a bus to the zoo."
+      ],
+      correct: "They pretended they were in a rainforest and looked for animals.",
+      hint: "They used their imagination."
+    },
+    {
+      id: "p11_join_count",
+      page: 13,
+      section: "Rainforest Comprehension",
+      area: "Reading",
+      text: "How many people join the nature walk by the end of the story (including Emma and Alex)?",
+      type: "mc",
+      options: ["3","4","6","7"],
+      correct: "6",
+      hint: "Emma, Alex, Nina, Rosie, Anna, Ian."
+    },
+    {
+      id: "p11_grownups",
+      page: 13,
+      section: "Rainforest Comprehension",
+      area: "Reading",
+      text: "Who are the two grown-ups in the story that join the children?",
+      type: "mc",
+      options: [
+        "Grandma and Nina's mom",
+        "Grandpa and Rosie’s dad",
+        "Teacher and principal",
+        "Coach and librarian"
+      ],
+      correct: "Grandpa and Rosie’s dad",
+      hint: "One is family, one is Rosie's parent."
+    },
+    {
+      id: "p14_vocab_canopy",
+      page: 14,
+      section: "Rainforest Vocabulary",
+      area: "Vocabulary",
+      text: "In the story, what is a 'canopy'?",
+      type: "mc",
+      options: [
+        "A gentle wind",
+        "A tall woody grass",
+        "The uppermost trees and branches that form a thick layer overhead",
+        "A fuzzy green plant"
+      ],
+      correct: "The uppermost trees and branches that form a thick layer overhead",
+      hint: "It is high above your head."
+    },
+
+    // ---------- PAGE 15: Being Bilingual ----------
+    {
+      id: "p15_bilingual_mc",
+      page: 15,
+      section: "Being Bilingual",
+      area: "Reading",
+      text: "Why is it good to speak more than one language?",
+      type: "multi",
+      options: [
+        "It is good for your brain.",
+        "It may make you more creative.",
+        "It may help you solve problems better.",
+        "It makes you taller.",
+        "It makes you run faster."
+      ],
+      correct: [
+        "It is good for your brain.",
+        "It may make you more creative.",
+        "It may help you solve problems better."
+      ],
+      hint: "Think about what the text says about the brain."
+    },
+    {
+      id: "p15_bilingual_open",
+      page: 15,
+      section: "Being Bilingual (RACE)",
+      area: "Writing",
+      text: "Use the ideas above to write one or two sentences about why it is good to speak more than one language.",
+      type: "open",
+      hint: "Use words like brain, creative, solve problems.",
+      starters: ["Being bilingual is good because...", "One benefit of speaking two languages is..."]
+    },
+
+    // ---------- PAGE 16: I Am the Stupendous (Set 3) ----------
+    {
+      id: "p16_news",
+      page: 16,
+      section: "My News",
+      area: "Writing",
+      text: "Write a short news headline about a time you were freezing or very cold.",
+      type: "open",
+      hint: "Think of a cold day, snow, or ice.",
+      starters: ["EXTRA, EXTRA! I was freezing when...", "Breaking news: The coldest day was when..."]
+    },
+    {
+      id: "p16_wordproblem",
+      page: 16,
+      section: "Math Word Problem",
+      area: "Math",
+      text: "My dad ate 2 whole pizzas. Each pizza had 8 slices. How many slices did he eat?",
+      type: "mc",
+      options: ["8","10","12","16"],
+      correct: "16",
+      hint: "2 groups of 8."
+    },
+    {
+      id: "p16_irregular",
+      page: 16,
+      section: "Irregular Verbs",
+      area: "ELA",
+      text: "Choose the correct past tense forms for the verbs: drive, find.",
+      type: "multi",
+      options: [
+        "drive → drived",
+        "drive → drove",
+        "find → founded",
+        "find → found"
+      ],
+      correct: ["drive → drove","find → found"],
+      hint: "These are common irregular verbs."
+    },
+    {
+      id: "p16_rounding",
+      page: 16,
+      section: "Rounding Numbers",
+      area: "Math",
+      text: "How does 775 round to the nearest ten and hundred?",
+      type: "mc",
+      options: [
+        "770 and 700",
+        "780 and 800",
+        "770 and 800",
+        "780 and 700"
+      ],
+      correct: "780 and 800",
+      hint: "5 or more, round up."
+    },
+    {
+      id: "p16_suffix",
+      page: 16,
+      section: "Suffix -er",
+      area: "ELA",
+      text: "Unscramble the word with suffix -er: pntaier.",
+      type: "mc",
+      options: ["painter","printer","partner"],
+      correct: "painter",
+      hint: "Someone who paints."
+    },
+    {
+      id: "p16_plural",
+      page: 16,
+      section: "Plural Nouns",
+      area: "ELA",
+      text: "Which is the correct plural for 'pony'?",
+      type: "mc",
+      options: ["ponys","ponies","ponyies"],
+      correct: "ponies",
+      hint: "Change y to i and add -es."
+    },
+    {
+      id: "p16_writing",
+      page: 16,
+      section: "Writing Prompt",
+      area: "Writing",
+      text: "Write about a time you were freezing. Use past tense.",
+      type: "open",
+      hint: "Use words like was, felt, shivered, wore.",
+      starters: ["One time I was freezing when...", "I felt very cold because..."]
+    },
+
+    // ---------- PAGE 17: The Girl Who Ate Her Homework ----------
+    {
+      id: "p17_riddle",
+      page: 17,
+      section: "Multiplication Riddle",
+      area: "Math Riddle",
+      text: "Riddle: Why did the girl eat her homework?",
+      type: "mc",
+      options: [
+        "Because she was hungry.",
+        "Because her teacher said it was a piece of cake.",
+        "Because she forgot her lunch.",
+        "Because she didn’t like homework."
+      ],
+      correct: "Because her teacher said it was a piece of cake.",
+      hint: "Think about a funny expression."
+    },
+
+    // ---------- PAGES 18–21: Snow Dance ----------
+    {
+      id: "p18_purpose",
+      page: 20,
+      section: "Snow Dance Comprehension",
+      area: "Reading",
+      text: "What was the author’s purpose for writing 'Snow Dance'?",
+      type: "mc",
+      options: [
+        "To teach readers how to make it snow.",
+        "To give information about snowy climates.",
+        "To entertain readers with a story about a girl who wants snow.",
+        "To explain how sleds are made."
+      ],
+      correct: "To entertain readers with a story about a girl who wants snow.",
+      hint: "It is a fun story, not a how‑to."
+    },
+    {
+      id: "p18_accumulation",
+      page: 20,
+      section: "Snow Dance Vocabulary",
+      area: "Vocabulary",
+      text: "In the story, what does 'accumulation' mean?",
+      type: "mc",
+      options: [
+        "Snow that falls during the night",
+        "Snow that sticks to the ground",
+        "Snow that is more than six inches deep",
+        "Snow that is slippery"
+      ],
+      correct: "Snow that sticks to the ground",
+      hint: "The weatherman said no accumulation."
+    },
+    {
+      id: "p18_month",
+      page: 20,
+      section: "Snow Dance Comprehension",
+      area: "Reading",
+      text: "During which month does this story most likely take place?",
+      type: "mc",
+      options: ["September","October","December","April"],
+      correct: "December",
+      hint: "She is on winter break and just got Christmas gifts."
+    },
+    {
+      id: "p18_snow_dance_desc",
+      page: 20,
+      section: "Snow Dance Description",
+      area: "Reading",
+      text: "Which sentence best describes Arianna’s snow dance?",
+      type: "mc",
+      options: [
+        "She sat quietly and wished for snow.",
+        "She marched around her sled, raised her hands, and chanted 'Snow, snow, snow.'",
+        "She ran outside and threw snowballs.",
+        "She danced with her friends at school."
+      ],
+      correct: "She marched around her sled, raised her hands, and chanted 'Snow, snow, snow.'",
+      hint: "Think about what she did in the living room."
+    },
+    {
+      id: "p18_chanting",
+      page: 20,
+      section: "Snow Dance Vocabulary",
+      area: "Vocabulary",
+      text: "What does 'chanting' mean in the sentence 'Arianna kept dancing and chanting'?",
+      type: "mc",
+      options: [
+        "Whispering quietly",
+        "Singing loudly",
+        "Repeating words over and over in a rhythm",
+        "Talking to herself"
+      ],
+      correct: "Repeating words over and over in a rhythm",
+      hint: "She said 'Snow, snow, snow' again and again."
+    },
+    {
+      id: "p21_story_elements",
+      page: 21,
+      section: "Snow Dance Story Elements",
+      area: "Reading",
+      text: "Which answer best matches the story elements of 'Snow Dance'?",
+      type: "mc",
+      options: [
+        "Characters: Arianna and her father; Setting: at home in winter; Problem: she wants snow; Solution: it finally snows.",
+        "Characters: Arianna and her teacher; Setting: at school; Problem: she lost her sled; Solution: she finds it.",
+        "Characters: Arianna and her friends; Setting: at the park; Problem: it is too hot; Solution: they go swimming.",
+        "Characters: Arianna and her mom; Setting: in summer; Problem: too much snow; Solution: it melts."
+      ],
+      correct: "Characters: Arianna and her father; Setting: at home in winter; Problem: she wants snow; Solution: it finally snows.",
+      hint: "Think about who is in the story and what she wants."
+    },
+
+    // ---------- PAGE 22: Becoming a Vegetarian ----------
+    {
+      id: "p22_veg_mc",
+      page: 22,
+      section: "Becoming a Vegetarian",
+      area: "Reading",
+      text: "Why do some people become vegetarians?",
+      type: "multi",
+      options: [
+        "For their health",
+        "For personal reasons",
+        "Because they hate all food",
+        "Because they want to get protein from beans, grains, dairy, and nuts"
+      ],
+      correct: [
+        "For their health",
+        "For personal reasons",
+        "Because they want to get protein from beans, grains, dairy, and nuts"
+      ],
+      hint: "Think about reasons the text gives."
+    },
+    {
+      id: "p22_veg_open",
+      page: 22,
+      section: "Becoming a Vegetarian (RACE)",
+      area: "Writing",
+      text: "Use the ideas above to write one or two sentences about why people become vegetarians.",
+      type: "open",
+      hint: "Use words like health, personal reasons, protein.",
+      starters: ["People become vegetarians because...", "One reason someone might not eat meat is..."]
+    }
+  ];
+
+  // ----------------- STATE -----------------
+  let currentIndex = 0;
+  const answers = {};
+  let studentName = "";
+  let studentGrade = "";
+
+  // ----------------- ELEMENTS -----------------
+  const screenLogin = document.getElementById("screen-login");
+  const screenQuiz = document.getElementById("screen-quiz");
+  const screenResult = document.getElementById("screen-result");
+  const btnStart = document.getElementById("btnStart");
+  const btnNext = document.getElementById("btnNext");
+  const btnDownloadPdf = document.getElementById("btnDownloadPdf");
+  const btnSendEmail = document.getElementById("btnSendEmail");
+  const questionContainer = document.getElementById("questionContainer");
+  const sectionBadge = document.getElementById("sectionBadge");
+  const sectionTitleText = document.getElementById("sectionTitleText");
+  const progressFill = document.getElementById("progressFill");
+  const scoreSummary = document.getElementById("scoreSummary");
+  const detailedResults = document.getElementById("detailedResults");
+  const pageLabel = document.getElementById("pageLabel");
+  const sectionLabel = document.getElementById("sectionLabel");
+  const soundCorrect = document.getElementById("soundCorrect");
+  const soundWrong = document.getElementById("soundWrong");
+  const soundNext = document.getElementById("soundNext");
+
+  // ----------------- LOGIN -----------------
+  btnStart.addEventListener("click", () => {
+    const nameInput = document.getElementById("studentName");
+    const gradeInput = document.getElementById("studentGrade");
+    if (!nameInput.value.trim() || !gradeInput.value) {
+      alert("Please type your name and select your grade.");
+      return;
+    }
+    studentName = nameInput.value.trim();
+    studentGrade = gradeInput.value;
+    screenLogin.classList.remove("active");
+    screenQuiz.classList.add("active");
+    currentIndex = 0;
+    renderQuestion();
+  });
+
+  // ----------------- RENDER QUESTION -----------------
+  function renderQuestion() {
+    const q = questions[currentIndex];
+    sectionBadge.textContent = q.area;
+    sectionTitleText.textContent = "Question " + (currentIndex + 1) + " of " + questions.length;
+    pageLabel.textContent = "Page " + q.page;
+    sectionLabel.textContent = "Section: " + q.section;
+
+    const progress = (currentIndex / questions.length) * 100;
+    progressFill.style.width = progress + "%";
+
+    let html = `<div class="card">
+      <div class="meta">Page ${q.page} • ${q.section} • ${q.area}</div>
+      <div class="question">${q.text}</div>`;
+
+    if (q.type === "mc") {
+      html += `<div class="options">`;
+      q.options.forEach((opt, i) => {
+        const id = `q_${q.id}_${i}`;
+        const checked = answers[q.id] === opt ? "checked" : "";
+        html += `
+          <label>
+            <input type="radio" name="${q.id}" id="${id}" value="${opt}" ${checked} />
+            ${opt}
+          </label>`;
+      });
+      html += `</div>`;
+    } else if (q.type === "multi") {
+      html += `<div class="options">`;
+      const saved = answers[q.id] || [];
+      q.options.forEach((opt, i) => {
+        const id = `q_${q.id}_${i}`;
+        const checked = saved.includes(opt) ? "checked" : "";
+        html += `
+          <label>
+            <input type="checkbox" name="${q.id}" id="${id}" value="${opt}" ${checked} />
+            ${opt}
+          </label>`;
+      });
+      html += `</div>`;
+    } else if (q.type === "open") {
+      const val = answers[q.id] || "";
+      html += `
+        <div class="field">
+          <textarea id="open_${q.id}" rows="4" placeholder="Write your answer here...">${val}</textarea>
+        </div>`;
+      if (q.starters && q.starters.length) {
+        html += `<div class="starter"><strong>Sentence starters:</strong> ${q.starters.join("  |  ")}</div>`;
+      }
+    }
+
+    if (q.hint) {
+      html += `
+        <button type="button" class="btn btn-small" onclick="toggleHint()">Show Hint</button>
+        <div class="hint" id="hintBox">${q.hint}</div>
+      `;
+    }
+
+    html += `</div>`;
+    questionContainer.innerHTML = html;
+
+    btnNext.textContent = currentIndex === questions.length - 1 ? "Finish" : "Next";
+  }
+
+  // Hint toggle
+  function toggleHint() {
+    const box = document.getElementById("hintBox");
+    if (!box) return;
+    box.style.display = box.style.display === "block" ? "none" : "block";
+  }
+  window.toggleHint = toggleHint; // expose for inline onclick
+
+  // ----------------- SAVE ANSWER -----------------
+  function saveCurrentAnswer() {
+    const q = questions[currentIndex];
+    if (q.type === "mc") {
+      const radios = document.querySelectorAll(`input[name="${q.id}"]`);
+      let selected = null;
+      radios.forEach(r => {
+        if (r.checked) selected = r.value;
+      });
+      if (!selected) {
+        alert("Please choose an answer before continuing.");
+        return false;
+      }
+      answers[q.id] = selected;
+    } else if (q.type === "multi") {
+      const checks = document.querySelectorAll(`input[name="${q.id}"]`);
+      const selected = [];
+      checks.forEach(c => {
+        if (c.checked) selected.push(c.value);
+      });
+      if (selected.length === 0) {
+        alert("Please choose at least one answer before continuing.");
+        return false;
+      }
+      answers[q.id] = selected;
+    } else if (q.type === "open") {
+      const ta = document.getElementById(`open_${q.id}`);
+      const val = ta.value.trim();
+      if (!val) {
+        alert("Please write your answer before continuing.");
+        return false;
+      }
+      answers[q.id] = val;
+    }
+    return true;
+  }
+
+  // ----------------- NEXT / FINISH -----------------
+  btnNext.addEventListener("click", () => {
+    if (!saveCurrentAnswer()) return;
+
+    if (currentIndex < questions.length - 1) {
+      currentIndex++;
+      soundNext.currentTime = 0;
+      soundNext.play();
+      renderQuestion();
+    } else {
+      showResults();
+    }
+  });
+
+  // ----------------- RESULTS -----------------
+  function arraysEqualIgnoreOrder(a, b) {
+    if (!Array.isArray(a) || !Array.isArray(b)) return false;
+    if (a.length !== b.length) return false;
+    const aSorted = [...a].sort();
+    const bSorted = [...b].sort();
+    return aSorted.every((v, i) => v === bSorted[i]);
+  }
+
+  function showResults() {
+    screenQuiz.classList.remove("active");
+    screenResult.classList.add("active");
+
+    let correctCount = 0;
+    let totalAuto = 0;
+
+    detailedResults.innerHTML = "";
+
+    questions.forEach(q => {
+      let isCorrect = null;
+      if (q.type === "mc" || q.type === "multi") {
+        totalAuto++;
+        if (q.type === "mc") {
+          isCorrect = answers[q.id] === q.correct;
+        } else {
+          isCorrect = arraysEqualIgnoreOrder(answers[q.id] || [], q.correct || []);
+        }
+        if (isCorrect) correctCount++;
+      }
+
+      const userAns = answers[q.id];
+      let userText;
+      if (q.type === "multi") {
+        userText = Array.isArray(userAns) ? userAns.join(", ") : "(no answer)";
+      } else {
+        userText = userAns ? userAns : "(no answer)";
+      }
+
+      let correctText;
+      if (q.type === "mc") {
+        correctText = q.correct;
+      } else if (q.type === "multi") {
+        correctText = (q.correct || []).join(", ");
+      } else {
+        correctText = "(open response – teacher graded)";
+      }
+
+      const line = document.createElement("div");
+      line.className = "card";
+      line.innerHTML = `
+        <div class="result-line"><strong>Page:</strong> ${q.page} • <strong>Section:</strong> ${q.section} • <strong>Area:</strong> ${q.area}</div>
+        <div class="result-line"><strong>Question:</strong> ${q.text}</div>
+        <div class="result-line"><strong>Your answer:</strong> ${userText}</div>
+        <div class="result-line"><strong>Correct answer:</strong> ${correctText}</div>
+        ${
+          q.type === "mc" || q.type === "multi"
+            ? `<div class="result-line ${isCorrect ? "correct" : "incorrect"}">${isCorrect ? "Correct" : "Incorrect"}</div>`
+            : `<div class="result-line small">This question will be checked by your teacher.</div>`
+        }
+      `;
+      detailedResults.appendChild(line);
+    });
+
+    const percent = totalAuto > 0 ? Math.round((correctCount / totalAuto) * 100) : 0;
+    scoreSummary.innerHTML = `
+      <div><strong>Student:</strong> ${studentName} (${studentGrade})</div>
+      <div><strong>Auto‑graded score:</strong> ${correctCount} / ${totalAuto} (${percent}%)</div>
+      <div class="small">Open‑response questions are not included in this score and will be graded by your teacher.</div>
+    `;
+
+    if (correctCount === totalAuto) {
+      soundCorrect.play();
+    } else {
+      soundWrong.play();
+    }
+
+    progressFill.style.width = "100%";
+  }
+
+  // ----------------- PDF GENERATION -----------------
+  btnDownloadPdf.addEventListener("click", () => {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    let y = 10;
+    doc.setFontSize(14);
+    doc.text("Grade 3 FID Game Homework Report", 10, y);
+    y += 8;
+    doc.setFontSize(11);
+    doc.text(`Student: ${studentName}`, 10, y);
+    y += 6;
+    doc.text(`Grade: ${studentGrade}`, 10, y);
+    y += 6;
+
+    let correctCount = 0;
+    let totalAuto = 0;
+    questions.forEach(q => {
+      if (q.type === "mc" || q.type === "multi") {
+        totalAuto++;
+        if (q.type === "mc") {
+          if (answers[q.id] === q.correct) correctCount++;
+        } else {
+          if (arraysEqualIgnoreOrder(answers[q.id] || [], q.correct || [])) correctCount++;
+        }
+      }
+    });
+    const percent = totalAuto > 0 ? Math.round((correctCount / totalAuto) * 100) : 0;
+    doc.text(`Auto‑graded score: ${correctCount} / ${totalAuto} (${percent}%)`, 10, y);
+    y += 10;
+
+    questions.forEach((q, idx) => {
+      if (y > 270) {
+        doc.addPage();
+        y = 10;
+      }
+      doc.setFontSize(11);
+      doc.text(`${idx + 1}. Page ${q.page} • ${q.section} • ${q.area}`, 10, y);
+      y += 5;
+      const splitQ = doc.splitTextToSize(q.text, 180);
+      doc.text(splitQ, 10, y);
+      y += splitQ.length * 5;
+
+      const userAns = answers[q.id];
+      let userText;
+      if (q.type === "multi") {
+        userText = Array.isArray(userAns) ? userAns.join(", ") : "(no answer)";
+      } else {
+        userText = userAns ? userAns : "(no answer)";
+      }
+      const ansLines = doc.splitTextToSize("Your answer: " + userText, 180);
+      doc.text(ansLines, 10, y);
+      y += ansLines.length * 5;
+
+      let correctText;
+      if (q.type === "mc") {
+        correctText = q.correct;
+      } else if (q.type === "multi") {
+        correctText = (q.correct || []).join(", ");
+      } else {
+        correctText = "(open response – teacher graded)";
+      }
+      const corrLines = doc.splitTextToSize("Correct answer: " + correctText, 180);
+      doc.text(corrLines, 10, y);
+      y += corrLines.length * 5;
+
+      y += 4;
+    });
+
+    doc.save(`Grade3_FID_${studentName.replace(/\s+/g, "_")}.pdf`);
+  });
+
+  // ----------------- EMAIL SENDING (EmailJS) -----------------
+  // 1. Go to https://www.emailjs.com/
+  // 2. Create an account, service, and template.
+  // 3. Replace YOUR_PUBLIC_KEY, YOUR_SERVICE_ID, YOUR_TEMPLATE_ID below.
+  // 4. In the template, include variables: student_name, student_grade, score_text, answers_text, teacher_email.
+  emailjs.init("YOUR_PUBLIC_KEY_HERE");
+
+  btnSendEmail.addEventListener("click", () => {
+    let correctCount = 0;
+    let totalAuto = 0;
+    questions.forEach(q => {
+      if (q.type === "mc" || q.type === "multi") {
+        totalAuto++;
+        if (q.type === "mc") {
+          if (answers[q.id] === q.correct) correctCount++;
+        } else {
+          if (arraysEqualIgnoreOrder(answers[q.id] || [], q.correct || [])) correctCount++;
+        }
+      }
+    });
+    const percent = totalAuto > 0 ? Math.round((correctCount / totalAuto) * 100) : 0;
+    const scoreText = `Auto‑graded score: ${correctCount} / ${totalAuto} (${percent}%)`;
+
+    let answersText = "";
+    questions.forEach((q, idx) => {
+      let userAns = answers[q.id];
+      if (q.type === "multi") {
+        userAns = Array.isArray(userAns) ? userAns.join(", ") : "(no answer)";
+      } else {
+        userAns = userAns || "(no answer)";
+      }
+
+      let correctText;
+      if (q.type === "mc") {
+        correctText = q.correct;
+      } else if (q.type === "multi") {
+        correctText = (q.correct || []).join(", ");
+      } else {
+        correctText = "(open response – teacher graded)";
+      }
+
+      answersText += `${idx + 1}. Page ${q.page} • ${q.section} • ${q.area}\n`;
+      answersText += `   Question: ${q.text}\n`;
+      answersText += `   Student answer: ${userAns}\n`;
+      answersText += `   Correct answer: ${correctText}\n\n`;
+    });
+
+    const templateParams = {
+      student_name: studentName,
+      student_grade: studentGrade,
+      score_text: scoreText,
+      answers_text: answersText,
+      teacher_email: "CMcGuire@rbwileyccs.org"
+    };
+
+    emailjs
+      .send("YOUR_SERVICE_ID_HERE", "YOUR_TEMPLATE_ID_HERE", templateParams)
+      .then(() => {
+        alert("Results sent to your teacher (if EmailJS is configured).");
+      })
+      .catch(err => {
+        console.error(err);
+        alert("Could not send email. Check EmailJS configuration in the code.");
+      });
+  });
+</script>
+</body>
+</html>
